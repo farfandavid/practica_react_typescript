@@ -1,24 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
+
+import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
+import Form from './components/Form';
+import List from './components/List';
+import { Sub } from './interfaces/types';
+import { getAllSubs } from './services/getAllSubs';
+
+/* interface AppState {
+  subs: Array<Sub>
+}
+ */
+
 
 function App() {
+  // const [subs, setSubs] = useState<number | string>(5);
+  //<Sub[]>  < AppState["subs"]>
+
+  const divRef = useRef<HTMLDivElement>(null);
+  /*   const changeNumber = () => {
+      setSubs(subs);
+    } */
+  const [subs, setSubs] = useState<Array<Sub>>([]);
+  useEffect(() => {
+
+    getAllSubs().then(setSubs)
+    /*  fetchSub()
+       .then(mapFromApiToSubs)
+       .then(setSubs) */
+    /*  .then(apiSubs => {
+       const subs = mapFromApiToSubs(apiSubs);
+       setSubs(subs);
+     }) */
+
+    /* fetch('./json/subs.json')
+      .then(res => res.json())
+      .then(subs => {
+        console.log(subs);
+        setSubs(subs);
+      }) */
+  }, [])
+
+  const handleNewSub = (newSub: Sub): void => {
+    setSubs(subs => [...subs, newSub])
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App" ref={divRef}>
+      <List subs={subs}></List>
+      <Form onNewSub={handleNewSub}></Form>
     </div>
   );
 }
